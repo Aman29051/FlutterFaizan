@@ -9,17 +9,15 @@ variables:
   buildConfiguration: 'release'
 
 steps:
-  # - powershell: |
-  #     Write-Host "Installing Flutter"
-  #     git clone https://github.com/flutter/flutter.git -b stable --depth 1
-  #     $env:PATH = "$($PWD.Path)\flutter\bin;$env:PATH"
-  #     flutter --version
-  #   displayName: 'Install Flutter'
+  - powershell: |
+      git clone -b master https://github.com/flutter/flutter.git
+      ./flutter/bin/flutter --version
+    displayName: 'Install Flutter'
 
-  - task: hey24sheep.FlutterInstall@0
-    inputs:
-      channel: stable
-      version: latest
+  # - task: hey24sheep.FlutterInstall@0
+  #   inputs:
+  #     channel: stable
+  #     version: latest
   
   - script: flutter pub get
     displayName: 'Flutter Pub Get'
