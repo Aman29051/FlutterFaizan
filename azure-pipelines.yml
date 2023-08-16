@@ -9,17 +9,20 @@ pr:
       - '*'
 
 pool:
-  vmImage: 'macos-latest'
+  name: Default
+  agent: cicd-project-agent
 
 variables:
   buildConfiguration: 'release'
 
 steps:
-  - task: UseFlutter@0
-    inputs:
-      flutterVersion: 'stable'
-      workingDirectory: ''
-      
+  - script: |
+      echo "Installing Flutter"
+      git clone https://github.com/flutter/flutter.git -b stable --depth 1
+      export PATH="$PWD/flutter/bin:$PATH"
+      flutter --version
+    displayName: 'Install Flutter'
+    
   - script: flutter pub get
     displayName: 'Flutter Pub Get'
 
