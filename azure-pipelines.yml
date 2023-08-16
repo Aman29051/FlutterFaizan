@@ -1,0 +1,48 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - '*'
+
+pool:
+  vmImage: 'macos-latest'
+
+variables:
+  buildConfiguration: 'release'
+
+steps:
+  - task: UseFlutter@0
+    inputs:
+      flutterVersion: 'stable'
+      workingDirectory: ''
+      
+  - script: flutter pub get
+    displayName: 'Flutter Pub Get'
+
+  - script: flutter build web --$buildConfiguration
+    displayName: 'Build Flutter Web'
+    
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: '$(Build.SourcesDirectory)/build/web'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/webapp.zip'
+      replaceExistingArchive: true
+
+  - powershell: |
+      Expand-Archive -Path $(Build.ArtifactStagingDirectory)/webapp.zip -DestinationPath $(Build.ArtifactStagingDirectory)/unzipped_artifacts
+    displayName: 'Unzip Artifacts'
+
+  - task: S3Upload@1
+    inputs:
+      awsCredentials: 'aws-flutter-deploy'
+      regionName: 'us-east-1'
+      bucketName: 'Flutter-Faizan'
+      sourceFolder: '$(Build.ArtifactStagingDirectory)/unzipped_artifacts'
+      globExpressions: '**'
+      createBucket: true
