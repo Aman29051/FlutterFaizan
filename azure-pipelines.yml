@@ -12,15 +12,21 @@ steps:
   - task: aloisdeniel.flutter.flutter-install.FlutterInstall@0
     displayName: 'Flutter Install'
 
-  - task: aloisdeniel.flutter.flutter-command.FlutterCommand@0
-    displayName: 'Flutter Enable Web'
-    inputs:
-      arguments: 'config --enable-web'
+  # - task: aloisdeniel.flutter.flutter-command.FlutterCommand@0
+  #   displayName: 'Flutter Enable Web'
+  #   inputs:
+  #     arguments: 'config --enable-web'
 
-  - task: aloisdeniel.flutter.flutter-command.FlutterCommand@0
-    displayName: 'Flutter Run Build Web'
-    inputs:
-      arguments: 'build web'
+  # - task: aloisdeniel.flutter.flutter-command.FlutterCommand@0
+  #   displayName: 'Flutter Run Build Web'
+  #   inputs:
+  #     arguments: 'build web'
+  
+  - script: flutter pub get
+    displayName: 'Flutter Pub Get'
+
+  - script: flutter build web --$buildConfiguration
+    displayName: 'Build Flutter Web'
 
   - task: ArchiveFiles@2
     inputs:
